@@ -104,17 +104,23 @@ RUN chown -R vasp:vasp /opt/miniconda3
 # Change to non-root user
 USER vasp
 
-# Ensure .bashrc exists
-RUN touch ~/.bashrc
+# Ensure .custom_bashrc exists
+RUN touch ~/.custom_bashrc
 
 # Add Miniconda to PATH and configure .bashrc
 ENV PATH="/opt/miniconda3/bin:$PATH"
 
 # Set up .bashrc
-RUN echo "export PATH=/opt/miniconda3/bin:\$PATH" >> ~/.bashrc && \
-    echo "source /opt/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    cat "/opt/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+RUN echo "export PATH=/opt/miniconda3/bin:\$PATH" >> ~/.custom_bashrc && \
+    echo "source /opt/miniconda3/etc/profile.d/conda.sh" >> ~/.custom_bashrc && \
+    cat "/opt/miniconda3/etc/profile.d/conda.sh" >> ~/.custom_bashrc && \
+    echo "conda activate base" >> ~/.custom_bashrc
+
+# Ensure .custom_bashrc is sourced so that conda commands below work
+RUN source ~/.custom_bashrc
+
+# # Ensure this is sourced in every shell session
+# RUN echo "source .custom_bashrc" >> ~/.bashrc
 
 WORKDIR /opt/miniconda3/bin
 # Install Python packages
@@ -129,8 +135,8 @@ RUN find ./ -follow -type f -name '*.a' -delete && \
     find ./ -follow -type f -name '*.js.map' -delete
 
 # Add alias for a quick vasp run (local)
-RUN echo "alias vs=\"mpirun -np $(nproc --all) vasp_std\"" >> ~/.bashrc
-RUN echo "alias vasp_rm=\"rm -f CHG CHGCAR CONTCAR STOPCAR DOSCAR DYNMAT EIGENVAL IBZKPT OPTIC OSZICAR OUTCAR PROCAR PCDAT WAVECAR XDATCAR PARCHG vasprun.xml REPORT wannier90.win wannier90_band.gnu wannier90_band.kpt wannier90.chk wannier90.wout vaspout.h5 PENALTYPOT HILLSPOT ML_LOGFILE ML_ABN ML_FFN ML_HIS ML_REG\"" >> ~/.bashrc
+RUN echo "alias vs=\"mpirun -np $(nproc --all) vasp_std\"" >> ~/.custom_bashrc
+RUN echo "alias vasp_rm=\"rm -f CHG CHGCAR CONTCAR STOPCAR DOSCAR DYNMAT EIGENVAL IBZKPT OPTIC OSZICAR OUTCAR PROCAR PCDAT WAVECAR XDATCAR PARCHG vasprun.xml REPORT wannier90.win wannier90_band.gnu wannier90_band.kpt wannier90.chk wannier90.wout vaspout.h5 PENALTYPOT HILLSPOT ML_LOGFILE ML_ABN ML_FFN ML_HIS ML_REG\"" >> ~/.custom_bashrc
 
 
 # Set up default mount point (for Docker only, Singularity handles this differently)
