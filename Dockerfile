@@ -32,11 +32,23 @@ RUN apt-get update -y && \
                        openssh-server \
                        libopenmpi-dev openmpi-common openmpi-bin \
                        libfftw3-dev \
-                       libhdf5-dev \
                        autoconf automake libtool m4
 # apt-get cleanup
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
+
+# Build HDF5
+WORKDIR /opt
+RUN wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.2/src/hdf5-1.12.2.tar.gz && \
+    tar -xvzf hdf5-1.12.2.tar.gz && \
+    cd hdf5-1.12.2 && \
+    ./configure --prefix=/opt/hdf5 --enable-fortran --enable-parallel && \
+    make -j$(nproc --all) && \
+    make install && \
+    cd .. && \
+    rm -rf hdf5-1.12.2 hdf5-1.12.2.tar.gz
+ENV PATH="/opt/hdf5/bin:$PATH"
+ENV LD_LIBRARY_PATH="/opt/hdf5/lib:$LD_LIBRARY_PATH"
 
 # Build libxc
 WORKDIR /opt
@@ -56,12 +68,11 @@ RUN make install
 ENV PATH="$PATH:/opt/libxc.6.2.2/bin"
 
 
-WORKDIR /opt
-
 # Build VASP 
-# Comment out if you need VTST tools
+WORKDIR /opt
+# Comment out line below if you need VTST tools
 # ADD ./vasp/vasp.6.4.3.tgz . 
-# Uncomment if you need VTST tools 2.04
+# Uncomment line below if you need VTST tools (v 2.04)
 ADD ./vasp/vasp.6.4.3+vtsttools.tgz .
 RUN mv vasp.6.4.3+vtsttools vasp.6.4.3
 

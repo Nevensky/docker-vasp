@@ -74,11 +74,11 @@ INCS       += -I$(FFTW_ROOT)/include
 
 # HDF5-support (optional but strongly recommended)
 CPP_OPTIONS+= -DVASP_HDF5
-#HDF5_ROOT  ?= /path/to/your/hdf5/installation
-HDF5_ROOT  ?= /usr/lib/x86_64-linux-gnu/hdf5/serial
-LLIBS      += -L$(HDF5_ROOT) -lhdf5_fortran -lhdf5
-# INCS       += -I$(HDF5_ROOT)/include
-INCS       += -I/usr/include/hdf5/serial
+HDF5_ROOT = /opt/hdf5
+LLIBS      += -L$(HDF5_ROOT)/lib -lhdf5_fortran -lhdf5
+INCS       += -I$(HDF5_ROOT)/include
+# HDF5_ROOT  ?= /usr/lib/x86_64-linux-gnu/hdf5/serial
+# INCS       += -I/usr/include/hdf5/serial
 
 # For the VASP-2-Wannier90 interface (optional)
 #CPP_OPTIONS    += -DVASP2WANNIER90
