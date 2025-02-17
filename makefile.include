@@ -94,6 +94,6 @@ INCS       += -I$(HDF5_ROOT)/include
 #LLIBS      += -ldl
 
 CPP_OPTIONS += -DUSELIBXC
-LIBXC_ROOT  ?= /opt/libxc.6.2.2
+LIBXC_ROOT  ?= /opt/libxc.7.0.0
 LLIBS       += -L$(LIBXC_ROOT)/lib -lxcf03 -lxc
 INCS        += -I$(LIBXC_ROOT)/include

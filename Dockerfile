@@ -52,20 +52,20 @@ ENV LD_LIBRARY_PATH="/opt/hdf5/lib:$LD_LIBRARY_PATH"
 
 # Build libxc
 WORKDIR /opt
-RUN git clone -b 6.2.2 https://gitlab.com/libxc/libxc.git libxc.6.2.2
-WORKDIR /opt/libxc.6.2.2
+RUN git clone -b 7.0.0 https://gitlab.com/libxc/libxc.git libxc.7.0.0
+WORKDIR /opt/libxc.7.0.0
 
 RUN aclocal
 RUN libtoolize
 # RUN autoconf -i
 RUN autoreconf -fi
 RUN mkdir -p libxc
-RUN ./configure --prefix=/opt/libxc.6.2.2 --disable-fhc CC=gcc FC=mpifort
+RUN ./configure --prefix=/opt/libxc.7.0.0 --disable-fhc CC=gcc FC=mpifort
 RUN make -j$(nproc --all)
 # RUN make check # commented out as it resuls in failed build; unit-tests fail when compiling with the --disable-fhc flag
 RUN make install
 
-ENV PATH="$PATH:/opt/libxc.6.2.2/bin"
+ENV PATH="$PATH:/opt/libxc.7.0.0/bin"
 
 
 # Build VASP 
@@ -138,7 +138,7 @@ WORKDIR /opt/miniconda3/bin
 RUN ./conda init bash && \
     ./conda install -y -c conda-forge numpy matplotlib scipy jupyter py4vasp && \
     ./conda clean -afy
-# removed pylibxc=6.2.2 from conda (takes up more space and is not connected to the compiled (above) libxc version)
+# removed pylibxc=7.0.0 from conda (takes up more space and is not connected to the compiled (above) libxc version)
 
 WORKDIR /opt/miniconda3
 # Clean up unnecessary files from Miniconda
